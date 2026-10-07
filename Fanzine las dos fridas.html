@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FANZINE - Análisis de Las dos Fridas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Nothing+You+Could+Do&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0c;
+            --text-color: #e2e8f0;
+            --accent-red: #8b0000;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Playfair Display', serif;
+            overflow-x: hidden;
+        }
+        .font-mono { font-family: 'Space Mono', monospace; }
+        .signature-font { font-family: 'Nothing You Could Do', cursive; }
+        
+        /* Fixed Background Image for Parallax/Zoom */
+        #artwork-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('https://historia-arte.com/_/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpbSI6WyJcL2FydHdvcmtcL2ltYWdlRmlsZVwvNWQ3YjdjOGI3NzczOS5qcGVnIiwicmVzaXplLDgwMCJdfQ.bc3NegLn6RU6MrtYkVPNZ0tOEmBWaSeT4PXa56OdTZw.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1;
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            filter: brightness(0.3) grayscale(0.5);
+        }
+
+        /* Content Sections */
+        .section-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .content-box {
+            background: rgba(10, 10, 12, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            border-radius: 2px;
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+            border-left: 4px solid var(--accent-red);
+        }
+
+        .content-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Fixed Thumbnail / Minimap */
+        #minimap {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            transition: transform 0.3s ease;
+        }
+        #minimap:hover {
+            transform: scale(1.05);
+        }
+
+        /* Vein SVG Animation */
+        .vein-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            transition: stroke-dashoffset 2s ease-out;
+        }
+        .vein-active .vein-path {
+            stroke-dashoffset: 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-red); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Fixed Background for Zoom Effects -->
+    <div id="artwork-bg"></div>
+
+    <!-- Fixed Thumbnail (Minimap) -->
+    <div id="minimap" class="fixed bottom-6 right-6 w-32 md:w-48 border border-white/20 z-50 rounded bg-black/80 backdrop-blur-md p-2">
+        <p class="font-mono text-[10px] text-gray-400 text-center mb-2 uppercase tracking-widest">Vista Completa</p>
+        <img src="https://historia-arte.com/_/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpbSI6WyJcL2FydHdvcmtcL2ltYWdlRmlsZVwvNWQ3YjdjOGI3NzczOS5qcGVnIiwicmVzaXplLDgwMCJdfQ.bc3NegLn6RU6MrtYkVPNZ0tOEmBWaSeT4PXa56OdTZw.jpeg" alt="Miniatura Las Dos Fridas" class="w-full h-auto rounded-sm opacity-90">
+        <div id="minimap-indicator" class="absolute w-4 h-4 border border-red-500 rounded-full transition-all duration-700 pointer-events-none opacity-0"></div>
+    </div>
+
+    <!-- Intro Header -->
+    <header class="min-h-screen flex flex-col justify-center items-center text-center p-4 relative z-10 bg-gradient-to-b from-black/80 to-transparent">
+        <h1 class="text-7xl md:text-9xl font-black mb-4 tracking-tighter">FANZINE</h1>
+        <p class="font-mono text-xl md:text-2xl text-gray-300 mb-8 uppercase tracking-widest border-y border-white/20 py-4 px-8">
+            Análisis de "Las dos Fridas"
+        </p>
+        <p class="max-w-2xl text-lg text-gray-400 italic">
+            Aplicación del método iconográfico-iconológico de Erwin Panofsky. Una aproximación desde la mirada del diseño y las artes visuales.
+        </p>
+        <div class="absolute bottom-10 animate-bounce">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        </div>
+    </header>
+
+    <!-- Main Content Sections -->
+    <main class="relative z-10">
+        
+        <!-- SECTION 1 -->
+        <section class="section-container justify-start" data-zoom="100" data-x="50" data-y="50" data-bright="0.5">
+            <div class="content-box ml-4 md:ml-20">
+                <p class="font-mono text-sm text-red-500 mb-2">[01. NIVEL PRE-ICONOGRÁFICO]</p>
+                <h2 class="text-3xl font-bold mb-4">La Tensión de la Retícula Visual</h2>
+                <p class="mb-4">Lo primero que capta mi atención al observar la obra es el equilibrio precario de su composición. Existe una simetría axial casi especular, anclada por el entrelazamiento de las manos en el centro exacto del lienzo.</p>
+                <p>Sin embargo, percibo cómo este equilibrio se rompe intencionalmente a través del peso visual: el vestido de novia blanco absorbe y refleja mucha más luz que el verde oscuro de la falda tehuana, creando una asimetría en la masa visual que estructura la página.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section class="section-container justify-end" data-zoom="150" data-x="50" data-y="10" data-bright="0.6">
+            <div class="content-box mr-4 md:mr-20">
+                <p class="font-mono text-sm text-red-500 mb-2">[02. NIVEL PRE-ICONOGRÁFICO]</p>
+                <h2 class="text-3xl font-bold mb-4">Un Cielo Que Comprime</h2>
+                <p class="mb-4">El choque deliberado entre el fondo y el primer plano me parece fascinante. Las nubes plomizas están aplicadas con pinceladas pesadas que empujan el fondo hacia el espectador, anulando la perspectiva atmosférica tradicional.</p>
+                <p>Las figuras no habitan un paisaje; están comprimidas contra él. Como diseñadora, noto cómo esta decisión monumentaliza a las figuras, dándoles una presencia arquitectónica que domina por completo el formato.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section class="section-container justify-start" data-zoom="200" data-x="30" data-y="60" data-bright="0.8">
+            <div class="content-box ml-4 md:ml-20">
+                <p class="font-mono text-sm text-red-500 mb-2">[03. NIVEL ICONOGRÁFICO]</p>
+                <h2 class="text-3xl font-bold mb-4">El Archivo Documental: Las Pinzas</h2>
+                <p class="mb-4">Al acercarme a la Frida europea, me detengo en sus manos. No sostiene tijeras de costura, sino unas pinzas hemostáticas tipo Kelly, diseñadas específicamente para ocluir vasos sanguíneos en quirófano.</p>
+                <p>Esta no es una metáfora romántica; es un documento visual crudo de la medicalización de su cuerpo. El intento de contener el sangrado emocional fracasa, manchando irreversiblemente de sangre las flores de su regazo.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 4 -->
+        <section class="section-container justify-end" data-zoom="200" data-x="70" data-y="60" data-bright="0.8">
+            <div class="content-box mr-4 md:mr-20">
+                <p class="font-mono text-sm text-red-500 mb-2">[04. NIVEL ICONOGRÁFICO]</p>
+                <h2 class="text-3xl font-bold mb-4">El Cordón Umbilical y el Origen</h2>
+                <p class="mb-4">La vena roja me obliga a realizar un recorrido visual cerrado. Trasciende la anatomía cardiovascular para funcionar como un cordón de alimentación que se origina en el pequeño camafeo con el retrato de Diego Rivera niño.</p>
+                <p>Me resulta revelador cómo Kahlo invierte los roles de género aquí: Diego no es el patriarca, sino una figura fetal de la cual emana la fuerza vital que sostiene la existencia de la Frida tehuana.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 5 -->
+        <section class="section-container justify-center" data-zoom="180" data-x="50" data-y="35" data-bright="0.9">
+            <div class="content-box text-center">
+                <p class="font-mono text-sm text-red-500 mb-2">[05. NIVEL ICONOLÓGICO]</p>
+                <h2 class="text-3xl font-bold mb-4">Sincretismo y Sacrificio</h2>
+                <div class="flex justify-center mb-6" id="vein-container">
+                    <svg width="200" height="50" viewBox="0 0 200 50" class="vein-active">
+                        <path d="M 0,25 Q 100,50 200,25" fill="none" stroke="#8b0000" stroke-width="3" class="vein-path"/>
+                    </svg>
+                </div>
+                <p class="mb-4">La exposición visceral de los órganos es, para mí, una síntesis del sincretismo mexicano. Conecta el "Sagrado Corazón" de la iconografía católica colonial con el sacrificio ritual azteca.</p>
+                <p>Kahlo se auto-sacrifica en el lienzo. Ofrece su corazón abierto para procesar el colapso de su propio micro-universo tras el divorcio.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 6 -->
+        <section class="section-container justify-end" data-zoom="150" data-x="80" data-y="50" data-bright="0.7">
+            <div class="content-box mr-4 md:mr-20">
+                <p class="font-mono text-sm text-red-500 mb-2">[06. NIVEL ICONOLÓGICO]</p>
+                <h2 class="text-3xl font-bold mb-4">El Manifiesto Poscolonial</h2>
+                <p class="mb-4">Me fascina cómo utiliza el vestido de Tehuana. No es un disfraz folclórico, sino un manifiesto de la intelectualidad posrevolucionaria; una postura antieuropeísta y matriarcal.</p>
+                <p>La pintura encarna la fricción de la modernidad en América Latina: la figura europea burguesa se desangra, incapaz de sobrevivir sola, mientras la figura indígena posee la fuerza terrenal para bombear la sangre. Una transfusión dolorosa de dependencia mutua.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 7 -->
+        <section class="section-container justify-start" data-zoom="160" data-x="30" data-y="80" data-bright="0.6">
+            <div class="content-box ml-4 md:ml-20">
+                <p class="font-mono text-sm text-red-500 mb-2">[07. NIVEL ICONOLÓGICO]</p>
+                <h2 class="text-3xl font-bold mb-4">Rechazo al Sueño Surrealista</h2>
+                <p class="mb-4">A diferencia de la lectura de André Breton, mi análisis revela que aquí no hay automatismo surrealista. *Las dos Fridas* es un diagrama sociopolítico y anatómico extremadamente racional.</p>
+                <p>La sangre que mancha el encaje blanco subvierte el ideal tradicional de pureza en la historia del arte, transformándolo en un acto de abyección explícita y documentada de su realidad biológica e identitaria.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 8: Personal Reflection -->
+        <section class="section-container justify-center bg-black/60 backdrop-blur-xl" data-zoom="100" data-x="50" data-y="50" data-bright="0.4">
+            <div class="content-box w-full max-w-3xl text-center border-t-4 border-l-0 border-white/20">
+                <p class="font-mono text-sm text-gray-400 mb-2">[08. REFLEXIÓN PERSONAL]</p>
+                <h2 class="text-4xl font-bold mb-6 italic">El Yo como Comunidad</h2>
+                <p class="text-xl leading-relaxed mb-6">
+                    Al concluir este recorrido metodológico, comprendo que la vena roja que une a estas dos mujeres es también un hilo que conecta mi propia visión sobre el diseño, el arte y la memoria. 
+                </p>
+                <p class="text-lg text-gray-300 leading-relaxed mb-8">
+                    Ante la inminencia de la fractura afectiva, la solución gráfica y conceptual que plantea la obra no es la búsqueda de un "otro" externo, sino la mitosis de su propia identidad. Al tomarse de la mano, Kahlo se convierte en su propio soporte afectivo. Es una lección monumental de resiliencia: la reconciliación de nuestras propias dualidades como acto de supervivencia.
+                </p>
+                
+                <div class="mt-12 pt-8 border-t border-white/10">
+                    <p class="font-mono text-xs text-gray-500 uppercase tracking-widest mb-4">Investigación, maquetación y análisis por:</p>
+                    <h3 class="text-5xl signature-font text-white drop-shadow-md">Ingrid Natalia Lara</h3>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const bg = document.getElementById('artwork-bg');
+            const sections = document.querySelectorAll('.section-container');
+            const contentBoxes = document.querySelectorAll('.content-box');
+            const minimapIndicator = document.getElementById('minimap-indicator');
+
+            // Intersection Observer to trigger animations and background zoom/pan
+            const observerOptions = {
+                root: null,
+                rootMargin: '-10% 0px -40% 0px',
+                threshold: 0.5
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Fade in content box
+                        const box = entry.target.querySelector('.content-box');
+                        if(box) box.classList.add('visible');
+
+                        // Trigger Vein Animation if present
+                        const vein = entry.target.querySelector('#vein-container');
+                        if(vein) vein.classList.add('vein-active');
+
+                        // Background Pan & Zoom
+                        const zoom = entry.target.getAttribute('data-zoom') || 100;
+                        const x = entry.target.getAttribute('data-x') || 50;
+                        const y = entry.target.getAttribute('data-y') || 50;
+                        const bright = entry.target.getAttribute('data-bright') || 0.4;
+
+                        bg.style.backgroundSize = `${zoom}%`;
+                        bg.style.backgroundPosition = `${x}% ${y}%`;
+                        bg.style.filter = `brightness(${bright}) grayscale(0.2)`;
+
+                        // Update Minimap Indicator
+                        minimapIndicator.style.opacity = '1';
+                        const mapWidth = 100; // rough percentage of the thumbnail
+                        const indicatorSize = 10000 / zoom; // inversely proportional to zoom
+                        
+                        minimapIndicator.style.width = `${indicatorSize}%`;
+                        minimapIndicator.style.height = `${indicatorSize}%`;
+                        minimapIndicator.style.left = `calc(${x}% - ${indicatorSize/2}%)`;
+                        minimapIndicator.style.top = `calc(${y}% - ${indicatorSize/2}%)`;
+
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
